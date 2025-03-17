@@ -43,7 +43,7 @@ public class OrderEntity {
     private AddressEntity address; // Where to ship
 
     @OneToOne
-    @JoinColumn(name = "payment_id", nullable = false)
+    @JoinColumn(name = "payment_id") // Allow payment to be null initially
     private PaymentEntity payment;
 
     @Override

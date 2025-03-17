@@ -1,6 +1,7 @@
 package com.example.onlineStore.entity;
 
 import com.example.onlineStore.enums.ProductCategory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,10 +33,12 @@ public class ProductEntity {
     /**
      * This means one product can appear in many cart items.
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<CartItemEntity> cartItemList;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<OrderItemEntity> orderItemList;
@@ -53,3 +56,7 @@ public class ProductEntity {
         return Objects.hashCode(id);
     }
 }
+
+/*
+    Use @JsonIgnore to prevent infinite loops in JSON serialization.
+ */

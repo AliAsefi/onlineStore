@@ -1,10 +1,9 @@
 package com.example.onlineStore.repository;
 
-import com.example.onlineStore.entity.CartEntity;
+import com.example.onlineStore.entity.OrderItemEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CartRepository extends JpaRepository<CartEntity, Long> {
-    CartEntity findByUser_Id(Long id);
+public interface OrderItemRepository extends JpaRepository<OrderItemEntity, Long> {
 }

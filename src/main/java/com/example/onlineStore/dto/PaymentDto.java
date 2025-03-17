@@ -7,8 +7,6 @@ import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -26,6 +24,6 @@ public class PaymentDto {
     private PaymentMethod paymentMethod; // CREDIT_CARD, PAYPAL, BANK_TRANSFER
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status; // PENDING, COMPLETED, FAILED
+    private PaymentStatus paymentStatus; // PENDING, COMPLETED, FAILED
 
 }

@@ -26,7 +26,4 @@ public class ProductDto {
     private double discountPercentage;
     @Enumerated(EnumType.STRING)
     private ProductCategory productCategory;
-
-    private List<CartItemDto> cartItemList = new ArrayList<>();
-    private List<OrderItemDto> orderItemList = new ArrayList<>();
 }

@@ -14,7 +14,8 @@ public class UserMapper {
 
     @Autowired
     private AddressMapper addressMapper;
-
+    @Autowired
+    private OrderMapper orderMapper;
     @Autowired
     private CartMapper cartMapper;
 
@@ -39,6 +40,17 @@ public class UserMapper {
                 .collect(Collectors.toList());
         userDto.setAddressList(addressDtoList);
 
+        userDto.setOrderlist(userEntity.getOrderList()
+                .stream()
+                .map(orderMapper::mapOrderEntityToDto)
+                .collect(Collectors.toList()));
+
+        if(userEntity.getCart() != null){
+            userDto.setCart(cartMapper.mapCartEntityToDto(userEntity.getCart()));
+        }else {
+            userDto.setCart(null); // Or don't set it at all
+        }
+
         return userDto;
     }
 
@@ -59,9 +71,16 @@ public class UserMapper {
         // Map the password from DTO to Entity and hash it
         //userEntity.setPassword(userService.hashPassword(userDto.getPassword()));
 
+        userEntity.setCart(cartMapper.mapCartDtoToEntity(userDto.getCart()));
+
         userEntity.setAddressList(userDto.getAddressList()
                 .stream()
                 .map(x->addressMapper.mapAddressDtoToEntity(x,userEntity))
+                .collect(Collectors.toList()));
+
+        userEntity.setOrderList(userDto.getOrderlist()
+                .stream()
+                .map(orderMapper::mapOrderDtoToEntity)
                 .collect(Collectors.toList()));
 
         return userEntity;

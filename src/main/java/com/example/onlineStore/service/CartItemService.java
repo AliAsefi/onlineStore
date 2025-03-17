@@ -34,7 +34,7 @@ public class CartItemService {
 
     public CartItemDto getCartItemById(Long id){
         CartItemEntity cartItemEntity = cartItemRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Product not found!"));
+                .orElseThrow(()->new RuntimeException("CartItem not found!"));
         return cartItemMapper.mapCartItemEntityToDto(cartItemEntity);
     }
 

@@ -28,10 +28,10 @@ public class PaymentEntity {
     private PaymentMethod paymentMethod; // CREDIT_CARD, PAYPAL, BANK_TRANSFER
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status; // PENDING, COMPLETED, FAILED
+    private PaymentStatus paymentStatus; // PENDING, COMPLETED, FAILED
 
     @OneToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id")
     private OrderEntity order; // Which order was paid
 
     @Override

@@ -2,14 +2,10 @@ package com.example.onlineStore.mapper;
 
 import com.example.onlineStore.dto.ProductDto;
 import com.example.onlineStore.entity.ProductEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProductMapper {
-
-    @Autowired
-    private CartItemMapper cartItemMapper;
 
     public ProductEntity mapProductDtoToEntity(ProductDto productDto){
         ProductEntity productEntity = new ProductEntity();

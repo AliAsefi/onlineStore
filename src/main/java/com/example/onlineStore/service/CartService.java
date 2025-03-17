@@ -6,7 +6,6 @@ import com.example.onlineStore.entity.CartEntity;
 import com.example.onlineStore.entity.CartItemEntity;
 import com.example.onlineStore.entity.ProductEntity;
 import com.example.onlineStore.entity.UserEntity;
-import com.example.onlineStore.mapper.CartItemMapper;
 import com.example.onlineStore.mapper.CartMapper;
 import com.example.onlineStore.repository.CartItemRepository;
 import com.example.onlineStore.repository.CartRepository;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,8 +31,6 @@ public class CartService {
     private UserRepository userRepository;
     @Autowired
     private ProductRepository productRepository;
-    @Autowired
-    private CartItemMapper cartItemMapper;
     @Autowired
     private CartItemRepository cartItemRepository;
 
@@ -136,7 +132,7 @@ public class CartService {
 
     public CartDto getCartById(Long id){
         CartEntity cartEntity = cartRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Product not found!"));
+                .orElseThrow(()->new RuntimeException("Cart not found!"));
         return cartMapper.mapCartEntityToDto(cartEntity);
     }
 

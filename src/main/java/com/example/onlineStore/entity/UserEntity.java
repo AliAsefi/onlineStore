@@ -1,6 +1,7 @@
 package com.example.onlineStore.entity;
 
 import com.example.onlineStore.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-@JsonIgnoreProperties({"password"})
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -28,11 +28,14 @@ public class UserEntity {
     private String lastName;
     private String username;
     @Enumerated(EnumType.STRING)
-    private Gender gender;
+    private Gender gender; //MALE, FEMALE, OTHER
     private LocalDate birthDate;
     private String phone;
     private String email;
-    private String password; // This field will be ignored globally
+
+    @Basic(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @ToString.Exclude
