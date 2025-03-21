@@ -13,7 +13,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**") // Adjust this to match your API endpoints
-                        .allowedOrigins("http://127.0.0.1:5500") // Allow your frontend
+                        .allowedOrigins("http://127.0.0.1:5500", "http://localhost:5500") // Allow your frontend
                         //.allowedOrigins("http://localhost:5500") // If using Live Server
                         //.allowedOrigins("http://localhost:8080") // If frontend is hosted elsewhere
                         //.allowedOrigins("https://aliasefi.github.io")

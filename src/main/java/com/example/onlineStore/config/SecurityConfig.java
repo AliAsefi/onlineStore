@@ -42,9 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/products/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginProcessingUrl("/api/auth/login")
-                        .permitAll()
+                .formLogin(AbstractHttpConfigurer::disable
                 )
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
@@ -53,7 +51,7 @@ public class SecurityConfig {
                             response.getWriter().write("Logout successful");
                         })
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)); // Keep session
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)); // Optional, can keep session or stateless
 
         return http.build();
     }
