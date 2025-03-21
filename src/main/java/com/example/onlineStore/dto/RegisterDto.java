@@ -1,9 +1,9 @@
 package com.example.onlineStore.dto;
 
-import com.example.onlineStore.entity.OrderEntity;
 import com.example.onlineStore.enums.Gender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,9 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDto {
+public class RegisterDto {
 
-    private Long id;
     private String firstName;
     private String lastName;
     private String username;
@@ -28,7 +27,5 @@ public class UserDto {
     private String email;
     private String password;
 
-    private CartDto cart;
     private List<AddressDto> addressList = new ArrayList<>();
-    private List<OrderDto> orderlist = new ArrayList<>();
 }

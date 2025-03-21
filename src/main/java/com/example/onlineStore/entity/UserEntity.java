@@ -7,9 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
@@ -37,7 +35,8 @@ public class UserEntity {
     @ToString.Exclude
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    // orphanRemoval = true to ensure addresses are deleted if they are removed from the user's address list.
     @ToString.Exclude
     private List<AddressEntity> addressList = new ArrayList<>();
 
@@ -49,6 +48,13 @@ public class UserEntity {
     @ToString.Exclude
     private List<OrderEntity> orderList = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<RoleEntity> roles = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
@@ -78,4 +84,5 @@ public class UserEntity {
     A user can place multiple orders.
     Each order belongs to one user.
 
+    The field verificationCode stores a random, unique String which is generated in the registration process and will be used in the verification process. Once registered, the enabled status of a user is false (disabled) so the user can’t login if he has not activated account by checking email and click on the verification link embedded in the email.
  */

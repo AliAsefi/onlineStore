@@ -1,15 +1,24 @@
 package com.example.onlineStore.service;
 
+import com.example.onlineStore.dto.AddressDto;
+import com.example.onlineStore.dto.RegisterDto;
 import com.example.onlineStore.dto.UserDto;
+import com.example.onlineStore.entity.AddressEntity;
+import com.example.onlineStore.entity.RoleEntity;
 import com.example.onlineStore.entity.UserEntity;
+import com.example.onlineStore.enums.RoleName;
 import com.example.onlineStore.mapper.UserMapper;
+import com.example.onlineStore.repository.RoleRepository;
 import com.example.onlineStore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,10 +30,61 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserDto createUser(UserDto userDto){
-        UserEntity userEntity = userMapper.mapUserDtoToEntity(userDto);
+    public UserDto registerUser(RegisterDto registerDto){
+
+        if (userRepository.findByUsername(registerDto.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already taken");
+        }
+
+        if (userRepository.findByEmail(registerDto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already taken");
+        }
+
+        // Encode password
+        String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
+
+        // Set default role USER
+        RoleEntity defaultRole = roleRepository.findByRoleName(RoleName.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Default role not found"));
+
+        // Create the user entity from RegisterDto
+        UserEntity userEntity = new UserEntity();
+
+        userEntity.setFirstName(registerDto.getFirstName());
+        userEntity.setLastName(registerDto.getLastName());
+        userEntity.setUsername(registerDto.getUsername());
+        userEntity.setEmail(registerDto.getEmail());
+        userEntity.setPassword(encodedPassword);
+        userEntity.setPhone(registerDto.getPhone());
+        userEntity.setRoles(Collections.singleton(defaultRole));  // Set default role
+        userEntity.setBirthDate(registerDto.getBirthDate());
+        userEntity.setGender(registerDto.getGender());
+
+        // Add the user's addresses from AddressDto
+        List<AddressEntity> addressEntities = new ArrayList<>();
+
+        for (AddressDto addressDto : registerDto.getAddressList()){
+            AddressEntity addressEntity = new AddressEntity();
+
+            addressEntity.setState(addressDto.getState());
+            addressEntity.setAddress(addressDto.getAddress());
+            addressEntity.setCountry(addressDto.getCountry());
+            addressEntity.setCity(addressDto.getCity());
+            addressEntity.setPostalCode(addressDto.getPostalCode());
+            addressEntity.setUser(userEntity);
+
+            addressEntities.add(addressEntity);
+        }
+
+        //Set the addresses to the user
+        userEntity.setAddressList(addressEntities);
+
         userRepository.save(userEntity);
         return userMapper.mapUserEntityToDto(userEntity);
     }
