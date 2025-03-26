@@ -35,7 +35,7 @@ public class UserEntity {
     @ToString.Exclude
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     // orphanRemoval = true to ensure addresses are deleted if they are removed from the user's address list.
     @ToString.Exclude
     private List<AddressEntity> addressList = new ArrayList<>();
@@ -44,7 +44,7 @@ public class UserEntity {
     @ToString.Exclude
     private CartEntity cart;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<OrderEntity> orderList = new ArrayList<>();
 

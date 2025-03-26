@@ -1,8 +1,14 @@
 package com.example.onlineStore.controller;
 
+import com.example.onlineStore.dto.JwtResponse;
 import com.example.onlineStore.dto.LoginDto;
 import com.example.onlineStore.dto.RegisterDto;
 import com.example.onlineStore.dto.UserDto;
+import com.example.onlineStore.entity.RoleEntity;
+import com.example.onlineStore.entity.UserEntity;
+import com.example.onlineStore.repository.UserRepository;
+import com.example.onlineStore.security.JwtTokenUtil;
+import com.example.onlineStore.service.CustomUserDetailsService;
 import com.example.onlineStore.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/auth")
@@ -30,6 +39,12 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDto> registerUser(@RequestBody RegisterDto registerDto){
@@ -39,17 +54,22 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         try {
+            // Authenticate user
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginDto.getUsername(), loginDto.getPassword())
+                    new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
             );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Generate JWT token
+            String token = jwtTokenUtil.generateToken(loginDto.getUsername());
 
-            return ResponseEntity.ok(Collections.singletonMap("message", "Login successful"));
+
+            // Fetch user details
+            UserDto userDto = userService.getUserByUsername(loginDto.getUsername());
+
+            return ResponseEntity.ok(new JwtResponse(token, userDto));
+
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Collections.singletonMap("message", "Invalid username or password"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
 

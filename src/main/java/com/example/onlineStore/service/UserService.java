@@ -13,6 +13,7 @@ import com.example.onlineStore.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,6 +107,12 @@ public class UserService {
     public UserDto getUserById(Long id){
         Optional<UserEntity> userEntityOptional = userRepository.findById(id);
         return userMapper.mapUserEntityToDto(userEntityOptional.orElseThrow(() -> new RuntimeException("User not found with id: " + id)));
+    }
+
+    public UserDto getUserByUsername(String username){
+        UserEntity userEntity = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        return userMapper.mapUserEntityToDto(userEntity);
     }
 
     public UserDto updateUser(Long id, UserDto userDto){

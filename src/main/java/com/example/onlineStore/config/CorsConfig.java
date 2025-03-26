@@ -18,7 +18,9 @@ public class CorsConfig {
                         //.allowedOrigins("http://localhost:8080") // If frontend is hosted elsewhere
                         //.allowedOrigins("https://aliasefi.github.io")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowCredentials(true);
+                        .allowedHeaders("*") // Allow all headers
+                        .allowCredentials(true) // Allow cookies (if needed)
+                        .maxAge(3600);
             }
         };
     }

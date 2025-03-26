@@ -20,7 +20,7 @@ public class ProductDto {
     private Long id;
     private String name;
     private String description;  // Optional product description
-    private String image; //file path
+    private String image; //url
     private int stockQuantity;
     private double price;
     private double discountPercentage;
