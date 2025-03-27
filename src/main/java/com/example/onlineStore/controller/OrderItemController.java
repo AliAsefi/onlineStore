@@ -37,7 +37,7 @@ public class OrderItemController {
         return new ResponseEntity<>(orderItemService.getOrderItemById(id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteOrderItem(@PathVariable("id") Long id){
         orderItemService.deleteOrderItem(id);
         return ResponseEntity.ok("OrderItem deleted successfully.");
