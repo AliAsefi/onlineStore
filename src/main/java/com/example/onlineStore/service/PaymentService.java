@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PaymentService {
@@ -27,8 +25,6 @@ public class PaymentService {
     private ProductRepository productRepository;
     @Autowired
     private CartRepository cartRepository;
-    @Autowired
-    private CartItemRepository cartItemRepository;
 
     @Transactional
     public PaymentDto createPayment(Long orderId, PaymentDto paymentDto){
@@ -69,23 +65,17 @@ public class PaymentService {
             productRepository.save(productEntity);
         }
 
-        // delete cartItems that has been paid
+       // 7. update totalPrice after adding payment for remaining cartItem
         CartEntity cartEntity = cartRepository.findByUser_Id(orderEntity.getUser().getId());
-        if (cartEntity != null) {
+        double totalCartPrice = cartEntity.getCartItemList()
+                .stream()
+                .mapToDouble(CartItemEntity::getTotalPrice)
+                .sum();
+        cartEntity.setTotalCartPrice(totalCartPrice);
+        cartRepository.save(cartEntity);
 
-            // Collect cart item IDs that need to be deleted
-            List<Long> cartItemIdsToDelete = orderEntity.getOrderItemList().stream()
-                    .map(orderItem -> orderItem.getProduct().getId()) // Get product IDs from OrderItems
-                    .collect(Collectors.toList());
-
-            // Delete the cart items from the database
-            cartItemRepository.deleteByProductIdIn(cartItemIdsToDelete);
-        }else{
-            paymentEntity.setPaymentStatus(PaymentStatus.FAILED);
-            orderEntity.setOrderStatus(OrderStatus.PENDING); // Order remains pending if payment fails
-        }
-
-        // 7. save
+        orderEntity.setTotalOrderPrice(totalOrderPrice);
+        // 8. save
         orderEntity.setPayment(paymentEntity);
         orderRepository.save(orderEntity);
         paymentRepository.save(paymentEntity);
@@ -94,7 +84,6 @@ public class PaymentService {
 
         /*
            {
-            "addressId": 152,
             "amountPaid" : 20.0,
             "paymentMethod" : "CREDIT_CARD"
            }
