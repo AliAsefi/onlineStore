@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+import static com.example.onlineStore.calculation.CalculationUtil.roundToTwoDecimal;
+
 @Service
 public class PaymentService {
 
@@ -71,7 +73,7 @@ public class PaymentService {
                 .stream()
                 .mapToDouble(CartItemEntity::getTotalPrice)
                 .sum();
-        cartEntity.setTotalCartPrice(totalCartPrice);
+        cartEntity.setTotalCartPrice(roundToTwoDecimal(totalCartPrice));
         cartRepository.save(cartEntity);
 
         orderEntity.setTotalOrderPrice(totalOrderPrice);

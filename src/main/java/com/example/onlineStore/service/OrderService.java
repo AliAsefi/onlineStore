@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.onlineStore.calculation.CalculationUtil.roundToTwoDecimal;
+
 @Service
 public class OrderService {
 
@@ -77,7 +79,7 @@ public class OrderService {
             orderItemEntity.setQuantity(cartItemEntity.getQuantity());
 
             double totalPrice = productEntity.getPrice() * cartItemEntity.getQuantity() * (1- productEntity.getDiscountPercentage()/100);
-            orderItemEntity.setTotalPrice(totalPrice);
+            orderItemEntity.setTotalPrice(roundToTwoDecimal(totalPrice));
 
             orderItemEntityList.add(orderItemEntity);
 
@@ -99,7 +101,7 @@ public class OrderService {
         double totalOrderPrice = orderItemEntityList.stream()
                 .mapToDouble(OrderItemEntity::getTotalPrice)
                 .sum();
-        orderEntity.setTotalOrderPrice(totalOrderPrice);
+        orderEntity.setTotalOrderPrice(roundToTwoDecimal(totalOrderPrice));
 
         orderEntity.setOrderItemList(orderItemEntityList);
         orderRepository.save(orderEntity);

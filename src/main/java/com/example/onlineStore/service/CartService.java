@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.onlineStore.calculation.CalculationUtil.roundToTwoDecimal;
+
 @Service
 public class CartService {
 
@@ -98,7 +100,7 @@ public class CartService {
 
         //calculate total cart price
         double totalPrice = cartItemEntity.getQuantity() * productEntity.getPrice() * (1 - productEntity.getDiscountPercentage()/100);
-        cartItemEntity.setTotalPrice(totalPrice);
+        cartItemEntity.setTotalPrice(roundToTwoDecimal(totalPrice));
 
         cartItemRepository.save(cartItemEntity);
 
@@ -111,7 +113,7 @@ public class CartService {
                 .sum();
 
         // Update cart total price
-        cartEntity.setTotalCartPrice(totalCartPrice);
+        cartEntity.setTotalCartPrice(roundToTwoDecimal(totalCartPrice));
 
         cartRepository.save(cartEntity);
 
@@ -161,7 +163,7 @@ public class CartService {
 
         // Recalculate total price for this item
         double totalPrice = existingItemEntity.getQuantity() * productEntity.getPrice() * (1 - productEntity.getDiscountPercentage()/100);
-        existingItemEntity.setTotalPrice(totalPrice);
+        existingItemEntity.setTotalPrice(roundToTwoDecimal(totalPrice));
 
         cartItemRepository.save(existingItemEntity);
 

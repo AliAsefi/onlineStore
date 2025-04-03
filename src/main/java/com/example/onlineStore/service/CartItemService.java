@@ -1,9 +1,11 @@
 package com.example.onlineStore.service;
 
 import com.example.onlineStore.dto.CartItemDto;
+import com.example.onlineStore.entity.CartEntity;
 import com.example.onlineStore.entity.CartItemEntity;
 import com.example.onlineStore.mapper.CartItemMapper;
 import com.example.onlineStore.repository.CartItemRepository;
+import com.example.onlineStore.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.onlineStore.calculation.CalculationUtil.roundToTwoDecimal;
+
 @Service
 public class CartItemService {
 
@@ -19,6 +23,8 @@ public class CartItemService {
     private CartItemRepository cartItemRepository;
     @Autowired
     private CartItemMapper cartItemMapper;
+    @Autowired
+    private CartRepository cartRepository;
 
     public List<CartItemDto> getAllCartItems(){
         return cartItemRepository.findAll()
@@ -39,7 +45,20 @@ public class CartItemService {
     }
 
     public void deleteCartItem(Long id){
+        CartItemEntity cartItemEntity = cartItemRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("cartItem not found"));
+
+        CartEntity cartEntity = cartItemEntity.getCart();
+
         cartItemRepository.deleteById(id);
+
+        //  update totalPrice after deleting cartItem for remaining cartItem
+        double totalCartPrice = cartEntity.getCartItemList()
+                .stream()
+                .mapToDouble(CartItemEntity::getTotalPrice)
+                .sum();
+        cartEntity.setTotalCartPrice(roundToTwoDecimal(totalCartPrice));
+        cartRepository.save(cartEntity);
     }
 }
 
